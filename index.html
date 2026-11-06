@@ -6,7 +6,7 @@
 <title>Emma's Pomodoro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* ---- design tokens ----
      palette: cream paper, deep editorial green, dusty pink, warm ink
@@ -26,20 +26,28 @@
     --gold: #dcb876;
     --ink: #2c2620;
     --ink-soft: #5b5245;
+    --font-display: 'Fraunces', serif;
+    --font-label: 'Jost', sans-serif;
+    --font-body: 'Lora', serif;
   }
 
-  /* ---- second skin: soft sunset-gradient look, toggled by the sparkle button ---- */
+  /* ---- second skin: soft coral-glow look, toggled by the sparkle button —
+     a different voice on purpose: upright modern serif + clean grotesque,
+     no stripes, no italics, a warm blurred halo behind the timer ---- */
   body.theme-gradient{
-    --cream: #fdf2e7;
-    --cream-card: #fffaf3;
-    --green: #c2410c;
-    --green-dark: #9a3412;
-    --pink: #f4bfcf;
-    --pink-stripe: #f7d6c9;
-    --pink-dark: #c2579b;
+    --cream: #fdf2ea;
+    --cream-card: #fffaf4;
+    --green: #c23b22;
+    --green-dark: #8f2a18;
+    --pink: #f6c3c9;
+    --pink-stripe: #f9d9d0;
+    --pink-dark: #d1495b;
     --gold: #e8a33d;
-    --ink: #3a2a22;
-    --ink-soft: #7a5b4d;
+    --ink: #3a241f;
+    --ink-soft: #8a5f54;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-label: 'Manrope', sans-serif;
+    --font-body: 'Manrope', sans-serif;
   }
 
   *{ box-sizing: border-box; }
@@ -50,7 +58,7 @@
     background: repeating-linear-gradient(90deg,
       var(--green) 0 22px, var(--pink) 22px 44px);
     color: var(--ink);
-    font-family: 'Lora', serif;
+    font-family: var(--font-body);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -59,8 +67,8 @@
     transition: background 1s ease, color .5s ease;
   }
   body.theme-gradient{
-    background: radial-gradient(ellipse at 50% -10%,
-      #ffd9ae 0%, #ffb3c6 32%, #d9a7f0 58%, var(--cream) 78%);
+    background: radial-gradient(ellipse at 50% -8%,
+      #ffd4a8 0%, #ff9fab 30%, #f0677d 54%, var(--cream) 78%);
   }
 
   .card{ transition: background .5s ease, border-color .5s ease, box-shadow .5s ease; }
@@ -77,17 +85,18 @@
   header{ text-align: center; margin-top: 16px; }
 
   .eyebrow{
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 600;
     font-size: .78rem;
     letter-spacing: .24em;
     text-transform: uppercase;
     color: var(--pink-dark);
     margin: 0 0 8px;
+    transition: color .4s ease;
   }
 
   .logo{
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-style: italic;
     font-weight: 600;
     font-size: 2.85rem;
@@ -95,16 +104,24 @@
     margin: 0;
     line-height: 1;
     letter-spacing: -.01em;
+    transition: color .4s ease;
   }
+  body.theme-gradient .logo{
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -.02em;
+  }
+  body.theme-gradient .logo .accent{ font-weight: 700; }
 
   .greeting{
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-style: italic;
     font-weight: 600;
     font-size: 1.35rem;
     color: var(--ink);
     margin: 14px 0 0;
   }
+  body.theme-gradient .greeting{ font-style: normal; font-weight: 500; }
 
   .divider{
     display: flex;
@@ -148,7 +165,7 @@
     padding: 12px 8px 14px;
   }
   .setting label{
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 600;
     font-size: .8rem;
     letter-spacing: .1em;
@@ -166,7 +183,7 @@
     border: 1px solid var(--green);
     background: var(--pink);
     color: var(--green-dark);
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 600;
     font-size: 1.1rem;
     cursor: pointer;
@@ -179,7 +196,7 @@
     outline-offset: 2px;
   }
   .stepper .val{
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 1.8rem;
     color: var(--green);
@@ -197,7 +214,7 @@
   }
 
   .mode-pill{
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 600;
     font-size: .85rem;
     letter-spacing: .14em;
@@ -217,14 +234,14 @@
     border-radius: 50%;
     z-index: -1;
     background: radial-gradient(circle at 35% 30%,
-      #ffb199 0%, #ff7eb3 35%, #c471ed 62%, transparent 76%);
+      #ffb199 0%, #ff7a6b 35%, #e8415c 62%, transparent 76%);
     filter: blur(28px);
     opacity: 0;
     transition: opacity .6s ease;
   }
   body.theme-gradient .ring-box::before{ opacity: .9; }
   .ring-box svg{ transform: rotate(-90deg); }
-  .ring-bg{ fill: none; stroke: var(--pink-stripe); stroke-width: 13; }
+  .ring-bg{ fill: none; stroke: var(--pink-stripe); stroke-width: 13; transition: stroke .4s ease, stroke-width .4s ease; }
   .ring-fg{
     fill: none;
     stroke: var(--green);
@@ -233,6 +250,9 @@
     transition: stroke-dashoffset .3s linear, stroke .3s;
   }
   .ring-fg.break{ stroke: var(--pink-dark); }
+  body.theme-gradient .ring-bg{ stroke: rgba(255,255,255,.4); stroke-width: 7; }
+  body.theme-gradient .ring-fg{ stroke: #ffffff; stroke-width: 7; }
+  body.theme-gradient .ring-fg.break{ stroke: #fff4ec; }
 
   .time-display{
     position: absolute; inset: 0;
@@ -240,15 +260,17 @@
     align-items: center; justify-content: center;
   }
   .time{
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 3.8rem;
     color: var(--ink);
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    transition: color .4s ease, font-weight .4s ease;
   }
+  body.theme-gradient .time{ font-weight: 400; font-size: 4.1rem; letter-spacing: -.01em; }
   .pomo-count{
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 500;
     letter-spacing: .1em;
     text-transform: uppercase;
@@ -270,7 +292,7 @@
 
   .controls{ display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .btn{
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 600;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -311,12 +333,13 @@
   .celebration .eyebrow{ color: var(--green-dark); opacity: .7; margin-bottom: 4px; }
   .celebration p{
     margin: 0;
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-style: italic;
     font-weight: 600;
     font-size: 1.4rem;
     color: var(--green-dark);
   }
+  body.theme-gradient .celebration p{ font-style: normal; font-weight: 500; }
   @keyframes pop{
     from{ transform: scale(.92); opacity: 0; }
     to{ transform: scale(1); opacity: 1; }
@@ -336,26 +359,28 @@
   .break-over .eyebrow{ color: var(--pink); opacity: .85; margin-bottom: 4px; }
   .break-over p{
     margin: 0;
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-style: italic;
     font-weight: 600;
     font-size: 1.7rem;
     color: var(--cream);
   }
+  body.theme-gradient .break-over p{ font-style: normal; font-weight: 500; }
 
   /* ---- tasks ---- */
   .tasks-title{
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
     font-size: 1.9rem;
     color: var(--green);
     margin: 0 0 12px;
   }
+  body.theme-gradient .tasks-title{ font-style: normal; font-weight: 500; }
   .task-add{ display: flex; gap: 8px; margin-bottom: 14px; }
   .task-add input[type="text"]{
     flex: 1;
-    font-family: 'Lora', serif;
+    font-family: var(--font-body);
     font-size: 1.1rem;
     padding: 9px 4px;
     border: none;
@@ -364,8 +389,9 @@
     color: var(--ink);
   }
   .task-add input[type="text"]::placeholder{ color: var(--ink-soft); font-style: italic; }
+  body.theme-gradient .task-add input[type="text"]::placeholder{ font-style: normal; }
   .task-add button{
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 600;
     letter-spacing: .06em;
     text-transform: uppercase;
@@ -409,14 +435,15 @@
     font-size: 1.1rem; cursor: pointer; flex: 0 0 auto; padding: 2px 6px;
   }
   .empty-msg{
-    font-family: 'Lora', serif; font-style: italic;
+    font-family: var(--font-body); font-style: italic;
     color: var(--ink-soft); font-size: 1rem; text-align: center; padding: 6px 0;
   }
+  body.theme-gradient .empty-msg{ font-style: normal; }
 
   footer.sign{
     align-self: center;
     text-align: center;
-    font-family: 'Jost', sans-serif;
+    font-family: var(--font-label);
     font-weight: 500;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -485,7 +512,7 @@
 
     <header class="card">
       <p class="eyebrow">Temporizador personalizado</p>
-      <h1 class="logo">Emma's Pomodoro</h1>
+      <h1 class="logo">Emma's <span class="accent">Pomodoro</span></h1>
       <p class="greeting">Hola Emma, ¿qué vamos a estudiar hoy?</p>
     </header>
 
