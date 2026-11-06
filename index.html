@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emma's Pomodoro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #f4ecdd;
+    --cream-card: #faf5ea;
+    --green: #234635;
+    --green-dark: #152e22;
+    --pink: #e8b2c9;
+    --pink-stripe: #f1cbdd;
+    --pink-dark: #d98fb3;
+    --gold: #dcb876;
+    --ink: #2c2620;
+    --ink-soft: #5b5245;
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{ height: 100%; margin: 0; }
+
+  body{
+    min-height: 100%;
+    background: repeating-linear-gradient(90deg,
+      var(--green) 0 22px, var(--pink) 22px 44px);
+    color: var(--ink);
+    font-family: 'Lora', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  .stripe-band{
+    width: 100%;
+    height: 38px;
+    overflow: hidden;
+    background: repeating-linear-gradient(90deg,
+      var(--green) 0 24px, var(--pink) 24px 48px);
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  .marquee{
+    display: flex;
+    white-space: nowrap;
+    animation: marquee-scroll 22s linear infinite;
+  }
+  .marquee span{
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-shadow: 0 1px 1px rgba(21,46,34,.35);
+    padding-right: 22px;
+  }
+  @keyframes marquee-scroll{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-50%); }
+  }
+
+  .sheet{
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px 30px;
+  }
+
+  header{ text-align: center; margin-top: 16px; }
+
+  .eyebrow{
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--pink-dark);
+    margin: 0 0 8px;
+  }
+
+  .logo{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 3.1rem;
+    color: var(--green);
+    margin: 0;
+    line-height: 1;
+  }
+
+  .greeting{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.35rem;
+    color: var(--ink);
+    margin: 14px 0 0;
+  }
+
+  .divider{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--pink-dark);
+    font-size: .9rem;
+    margin: -2px 4px;
+  }
+  .divider::before, .divider::after{
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--green);
+    opacity: .35;
+  }
+
+  .card{
+    background: var(--cream-card);
+    border: 2px solid var(--green);
+    border-radius: 6px;
+    padding: 22px 20px;
+  }
+
+  .settings{
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+  }
+  .setting{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px dashed var(--green);
+    border-radius: 4px;
+    padding: 12px 8px 14px;
+  }
+  .setting label{
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    font-size: .8rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .stepper{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .stepper button{
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--green);
+    background: var(--pink);
+    color: var(--green-dark);
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .stepper button:hover{ background: var(--green); color: var(--cream); }
+  .stepper button:focus-visible, button:focus-visible, input:focus-visible{
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+  }
+  .stepper .val{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--green);
+    min-width: 2.2ch;
+    text-align: center;
+  }
+
+  .timer-wrap{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mode-pill{
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    font-size: .85rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 6px 20px;
+    border-radius: 999px;
+    background: var(--green);
+    color: var(--cream);
+  }
+  .mode-pill.break{ background: var(--pink); color: var(--green-dark); }
+
+  .ring-box{ position: relative; width: 250px; height: 250px; }
+  .ring-box svg{ transform: rotate(-90deg); }
+  .ring-bg{ fill: none; stroke: var(--pink-stripe); stroke-width: 13; }
+  .ring-fg{
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 13;
+    stroke-linecap: round;
+    transition: stroke-dashoffset .3s linear, stroke .3s;
+  }
+  .ring-fg.break{ stroke: var(--pink-dark); }
+
+  .time-display{
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .time{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 3.8rem;
+    color: var(--ink);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .pomo-count{
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    letter-spacing: .06em;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  .confetti-layer{ position: absolute; inset: 0; overflow: visible; pointer-events: none; z-index: 6; }
+  .confetti-piece{
+    position: absolute; top: 10%;
+    width: 7px; height: 12px; border-radius: 2px; opacity: .95;
+    animation: confetti-fall 1.3s ease-in forwards;
+  }
+  @keyframes confetti-fall{
+    0%{ transform: translateY(0) rotate(0deg); opacity: 1; }
+    100%{ transform: translateY(230px) rotate(360deg); opacity: 0; }
+  }
+
+  .controls{ display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .btn{
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: 1rem;
+    border: 2px solid var(--green);
+    border-radius: 999px;
+    padding: 11px 26px;
+    cursor: pointer;
+    color: var(--green-dark);
+    background: var(--pink);
+  }
+  .btn.secondary{ background: transparent; color: var(--green); }
+  .btn:hover{ filter: brightness(1.04); }
+  .btn:active{ transform: translateY(1px); }
+  .icon-btn{ padding: 11px 15px; font-size: 1.2rem; }
+
+  .celebration{
+    display: none;
+    text-align: center;
+    background: repeating-linear-gradient(125deg, var(--pink) 0 16px, var(--pink-stripe) 16px 32px);
+    border: 2px solid var(--green);
+    border-radius: 6px;
+    padding: 16px 14px;
+    margin-top: 2px;
+  }
+  .celebration.show{ display: block; animation: pop .35s ease; }
+  .stars{
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: .1em;
+    margin-bottom: 6px;
+  }
+  .celebration p{
+    margin: 0;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--green-dark);
+  }
+  @keyframes pop{
+    from{ transform: scale(.85); opacity: 0; }
+    to{ transform: scale(1); opacity: 1; }
+  }
+
+  .break-over{
+    display: none;
+    text-align: center;
+    background: var(--green);
+    border: 2px solid var(--green-dark);
+    border-radius: 6px;
+    padding: 18px 14px 16px;
+    margin-top: 2px;
+  }
+  .break-over.show{ display: block; animation: pop .35s ease; }
+  .break-over svg{ display: block; margin: 0 auto 8px; }
+  .break-over p{
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.9rem;
+    color: var(--cream);
+  }
+
+  .tasks-title{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: var(--green);
+    margin: 0 0 12px;
+  }
+  .task-add{ display: flex; gap: 8px; margin-bottom: 14px; }
+  .task-add input[type="text"]{
+    flex: 1;
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    padding: 9px 4px;
+    border: none;
+    border-bottom: 2px solid var(--green);
+    background: transparent;
+    color: var(--ink);
+  }
+  .task-add input[type="text"]::placeholder{ color: var(--ink-soft); font-style: italic; }
+  .task-add button{
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-size: 1rem;
+    border: 2px solid var(--green);
+    border-radius: 999px;
+    padding: 0 20px;
+    background: var(--green);
+    color: var(--cream);
+    cursor: pointer;
+  }
+
+  .task-list{
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: 0;
+    max-height: 260px; overflow-y: auto;
+  }
+  .task-item{
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 2px;
+    border-bottom: 1.5px solid var(--pink-stripe);
+  }
+  .task-item .check{
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--green);
+    background: var(--cream-card);
+    flex: 0 0 auto;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cream);
+    font-size: .8rem;
+  }
+  .task-item.done .check{ background: var(--green); }
+  .task-item span.label{ flex: 1; font-size: 1.15rem; word-break: break-word; }
+  .task-item.done span.label{ text-decoration: line-through; color: var(--ink-soft); }
+  .task-item .del{
+    border: none; background: none; color: var(--pink-dark);
+    font-size: 1.1rem; cursor: pointer; flex: 0 0 auto; padding: 2px 6px;
+  }
+  .empty-msg{
+    font-family: 'Lora', serif; font-style: italic;
+    color: var(--ink-soft); font-size: 1rem; text-align: center; padding: 6px 0;
+  }
+
+  footer.sign{
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--green-dark);
+    background: var(--cream-card);
+    border: 1.5px solid var(--green);
+    border-radius: 999px;
+    padding: 8px 10px;
+    margin-top: 2px;
+  }
+
+  @media (max-width: 380px){
+    .ring-box{ width: 215px; height: 215px; }
+    .time{ font-size: 3.2rem; }
+    .logo{ font-size: 2.6rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="stripe-band">
+    <div class="marquee">
+      <span>EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
+      <span aria-hidden="true">EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
+    </div>
+  </div>
+
+  <div class="sheet">
+
+    <header class="card">
+      <p class="eyebrow">Temporizador personalizado</p>
+      <h1 class="logo">Emma's Pomodoro</h1>
+      <p class="greeting">Hola Emma, ¿qué vamos a estudiar hoy?</p>
+    </header>
+
+    <section class="card">
+      <div class="settings">
+        <div class="setting">
+          <label for="focusVal">Foco (min)</label>
+          <div class="stepper">
+            <button type="button" id="focusDown" aria-label="Menos minutos de foco">−</button>
+            <span class="val" id="focusVal">25</span>
+            <button type="button" id="focusUp" aria-label="Más minutos de foco">+</button>
+          </div>
+        </div>
+        <div class="setting">
+          <label for="breakVal">Descanso (min)</label>
+          <div class="stepper">
+            <button type="button" id="breakDown" aria-label="Menos minutos de descanso">−</button>
+            <span class="val" id="breakVal">5</span>
+            <button type="button" id="breakUp" aria-label="Más minutos de descanso">+</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card timer-wrap">
+      <span class="mode-pill" id="modePill">Hora de enfocarnos</span>
+
+      <div class="ring-box">
+        <svg width="250" height="250" viewBox="0 0 250 250">
+          <circle class="ring-bg" cx="125" cy="125" r="108"></circle>
+          <circle class="ring-fg" id="ringFg" cx="125" cy="125" r="108"
+                  stroke-dasharray="678.6" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="time-display">
+          <span class="time" id="timeLabel">25:00</span>
+          <span class="pomo-count" id="pomoCount">🍅 0 pomodoros hoy</span>
+        </div>
+        <div class="confetti-layer" id="confettiLayer"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="startPauseBtn">Empezar</button>
+        <button class="btn secondary" id="resetBtn">Reiniciar</button>
+        <button class="btn secondary icon-btn" id="soundToggle" aria-label="Silenciar sonidos" title="Sonidos">🔊</button>
+      </div>
+
+      <div class="celebration" id="celebration">
+        <p class="stars">★ ★ ★ ★ ★</p>
+        <p>¡Felicitaciones, Emma! Te merecés una dosis de TikTok 📱</p>
+      </div>
+
+      <div class="break-over" id="breakOver">
+        <svg width="90" height="20" viewBox="0 0 90 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2 10 Q 13 0, 24 10 T 46 10 T 68 10 T 88 10" fill="none" stroke="#f4ecdd" stroke-width="2.2" stroke-linecap="round"></path>
+        </svg>
+        <p>¡Volvemos a estudiar!</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="tasks-title">Tareas de hoy</p>
+      <div class="task-add">
+        <input type="text" id="taskInput" placeholder="¿Qué tenés que estudiar?" maxlength="120">
+        <button type="button" id="addTaskBtn">Añadir</button>
+      </div>
+      <ul class="task-list" id="taskList"></ul>
+      <p class="empty-msg" id="emptyMsg">Todavía no hay tareas. ¡Agregá la primera!</p>
+    </section>
+
+    <footer class="sign">Hecho con cariño para Emma</footer>
+
+  </div>
+
+  <div class="stripe-band">
+    <div class="marquee">
+      <span>EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
+      <span aria-hidden="true">EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  function loadJSON(key, fallback){
+    try{
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+  function saveJSON(key, value){
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ }
+  }
+
+  var state = loadJSON('emmaPomodoroState', {
+    focusMin: 25,
+    breakMin: 5,
+    pomosToday: 0,
+    tasks: [],
+    soundOn: true
+  });
+  if(typeof state.soundOn === 'undefined'){ state.soundOn = true; }
+
+  var mode = 'focus';
+  var totalSeconds = state.focusMin * 60;
+  var remaining = totalSeconds;
+  var running = false;
+  var tickHandle = null;
+  var endTimestamp = null;
+
+  var focusVal = document.getElementById('focusVal');
+  var breakVal = document.getElementById('breakVal');
+  var focusUp = document.getElementById('focusUp');
+  var focusDown = document.getElementById('focusDown');
+  var breakUp = document.getElementById('breakUp');
+  var breakDown = document.getElementById('breakDown');
+
+  var modePill = document.getElementById('modePill');
+  var ringFg = document.getElementById('ringFg');
+  var timeLabel = document.getElementById('timeLabel');
+  var pomoCount = document.getElementById('pomoCount');
+  var startPauseBtn = document.getElementById('startPauseBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var celebration = document.getElementById('celebration');
+  var breakOver = document.getElementById('breakOver');
+  var confettiLayer = document.getElementById('confettiLayer');
+  var soundToggle = document.getElementById('soundToggle');
+
+  var taskInput = document.getElementById('taskInput');
+  var addTaskBtn = document.getElementById('addTaskBtn');
+  var taskList = document.getElementById('taskList');
+  var emptyMsg = document.getElementById('emptyMsg');
+
+  var CIRC = 2 * Math.PI * 108;
+
+  var audioCtx = null;
+
+  function ensureAudio(){
+    try{
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return;
+      if(!audioCtx){ audioCtx = new AC(); }
+      if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+    }catch(e){ }
+  }
+
+  function playNote(freq, when, dur, vol){
+    if(!audioCtx) return;
+    try{
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, when);
+      gain.gain.exponentialRampToValueAtTime(vol, when + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(when);
+      osc.stop(when + dur + 0.03);
+    }catch(e){ }
+  }
+
+  function playFocusEndSound(){
+    if(!state.soundOn) return;
+    ensureAudio();
+    if(!audioCtx) return;
+    var now = audioCtx.currentTime;
+    [523.25, 659.25, 783.99, 1046.50].forEach(function(freq, i){
+      playNote(freq, now + i * 0.12, 0.22, 0.16);
+    });
+  }
+
+  function playBreakEndSound(){
+    if(!state.soundOn) return;
+    ensureAudio();
+    if(!audioCtx) return;
+    var now = audioCtx.currentTime;
+    playNote(392.00, now, 0.22, 0.13);
+    playNote(523.25, now + 0.16, 0.3, 0.13);
+  }
+
+  function renderSoundToggle(){
+    soundToggle.textContent = state.soundOn ? '🔊' : '🔇';
+    soundToggle.setAttribute('aria-label', state.soundOn ? 'Silenciar sonidos' : 'Activar sonidos');
+  }
+
+  soundToggle.addEventListener('click', function(){
+    state.soundOn = !state.soundOn;
+    if(state.soundOn){ ensureAudio(); }
+    persist();
+    renderSoundToggle();
+  });
+
+  function fireConfetti(){
+    var colors = ['#234635', '#e8b2c9', '#d98fb3', '#dcb876'];
+    for(var i = 0; i < 16; i++){
+      (function(){
+        var piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.left = (5 + Math.random() * 90) + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = (Math.random() * 0.25) + 's';
+        piece.style.transform = 'rotate(' + Math.floor(Math.random() * 360) + 'deg)';
+        confettiLayer.appendChild(piece);
+        setTimeout(function(){ piece.remove(); }, 1700);
+      })();
+    }
+  }
+
+  function formatTime(s){
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return (m < 10 ? '0' + m : m) + ':' + (sec < 10 ? '0' + sec : sec);
+  }
+
+  function renderSettings(){
+    focusVal.textContent = state.focusMin;
+    breakVal.textContent = state.breakMin;
+  }
+
+  function renderTimer(){
+    timeLabel.textContent = formatTime(remaining);
+    pomoCount.textContent = '🍅 ' + state.pomosToday + (state.pomosToday === 1 ? ' pomodoro hoy' : ' pomodoros hoy');
+
+    var fraction = totalSeconds > 0 ? (remaining / totalSeconds) : 0;
+    var offset = CIRC * (1 - fraction);
+    ringFg.setAttribute('stroke-dashoffset', offset.toFixed(1));
+
+    if(mode === 'break'){
+      modePill.textContent = 'Momento de descansar';
+      modePill.classList.add('break');
+      ringFg.classList.add('break');
+    } else {
+      modePill.textContent = 'Hora de enfocarnos';
+      modePill.classList.remove('break');
+      ringFg.classList.remove('break');
+    }
+
+    startPauseBtn.textContent = running ? 'Pausar' : (remaining === totalSeconds ? 'Empezar' : 'Seguir');
+  }
+
+  function setMode(newMode, resetTime){
+    mode = newMode;
+    totalSeconds = (mode === 'focus' ? state.focusMin : state.breakMin) * 60;
+    if(resetTime !== false){ remaining = totalSeconds; }
+    renderTimer();
+  }
+
+  function persist(){
+    saveJSON('emmaPomodoroState', state);
+  }
+
+  function tick(){
+    if(!running || endTimestamp === null) return;
+    var msLeft = endTimestamp - Date.now();
+    remaining = Math.max(0, Math.round(msLeft / 1000));
+    renderTimer();
+    if(remaining <= 0){
+      handleSessionEnd();
+    }
+  }
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden && running){
+      tick();
+    }
+  });
+
+  function handleSessionEnd(){
+    stopTicking();
+    running = false;
+    endTimestamp = null;
+
+    if(mode === 'focus'){
+      state.pomosToday += 1;
+      persist();
+      breakOver.classList.remove('show');
+      celebration.classList.add('show');
+      fireConfetti();
+      playFocusEndSound();
+      setMode('break', true);
+    } else {
+      celebration.classList.remove('show');
+      breakOver.classList.add('show');
+      playBreakEndSound();
+      setMode('focus', true);
+    }
+    renderTimer();
+  }
+
+  function startTicking(){
+    if(tickHandle) return;
+    tickHandle = setInterval(tick, 1000);
+  }
+  function stopTicking(){
+    if(tickHandle){ clearInterval(tickHandle); tickHandle = null; }
+  }
+
+  startPauseBtn.addEventListener('click', function(){
+    if(running){
+      if(endTimestamp !== null){
+        remaining = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
+      }
+      running = false;
+      endTimestamp = null;
+      stopTicking();
+    } else {
+      running = true;
+      ensureAudio();
+      celebration.classList.remove('show');
+      breakOver.classList.remove('show');
+      endTimestamp = Date.now() + remaining * 1000;
+      startTicking();
+    }
+    renderTimer();
+  });
+
+  resetBtn.addEventListener('click', function(){
+    running = false;
+    endTimestamp = null;
+    stopTicking();
+    celebration.classList.remove('show');
+    breakOver.classList.remove('show');
+    setMode(mode, true);
+  });
+
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+  function adjustFocus(delta){
+    state.focusMin = clamp(state.focusMin + delta, 5, 90);
+    renderSettings();
+    persist();
+    if(mode === 'focus' && !running){ setMode('focus', true); }
+  }
+  function adjustBreak(delta){
+    state.breakMin = clamp(state.breakMin + delta, 1, 30);
+    renderSettings();
+    persist();
+    if(mode === 'break' && !running){ setMode('break', true); }
+  }
+
+  focusUp.addEventListener('click', function(){ adjustFocus(5); });
+  focusDown.addEventListener('click', function(){ adjustFocus(-5); });
+  breakUp.addEventListener('click', function(){ adjustBreak(1); });
+  breakDown.addEventListener('click', function(){ adjustBreak(-1); });
+
+  function renderTasks(){
+    taskList.innerHTML = '';
+    if(state.tasks.length === 0){
+      emptyMsg.style.display = 'block';
+      return;
+    }
+    emptyMsg.style.display = 'none';
+
+    state.tasks.forEach(function(task){
+      var li = document.createElement('li');
+      li.className = 'task-item' + (task.done ? ' done' : '');
+
+      var check = document.createElement('button');
+      check.type = 'button';
+      check.className = 'check';
+      check.setAttribute('aria-label', task.done ? 'Marcar como pendiente' : 'Marcar como hecha');
+      check.textContent = task.done ? '✓' : '';
+      check.addEventListener('click', function(){
+        task.done = !task.done;
+        persist();
+        renderTasks();
+      });
+
+      var label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = task.label;
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'del';
+      del.setAttribute('aria-label', 'Eliminar tarea');
+      del.textContent = '✕';
+      del.addEventListener('click', function(){
+        state.tasks = state.tasks.filter(function(t){ return t.id !== task.id; });
+        persist();
+        renderTasks();
+      });
+
+      li.appendChild(check);
+      li.appendChild(label);
+      li.appendChild(del);
+      taskList.appendChild(li);
+    });
+  }
+
+  function addTask(){
+    var text = taskInput.value.trim();
+    if(!text) return;
+    state.tasks.push({ id: Date.now() + '-' + Math.random().toString(36).slice(2), label: text, done: false });
+    taskInput.value = '';
+    persist();
+    renderTasks();
+    taskInput.focus();
+  }
+
+  addTaskBtn.addEventListener('click', addTask);
+  taskInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); addTask(); }
+  });
+
+  renderSettings();
+  renderSoundToggle();
+  setMode('focus', true);
+  renderTasks();
+
+})();
+</script>
+</body>
+</html>
