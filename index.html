@@ -6,7 +6,7 @@
 <title>Emma's Pomodoro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream: #f4ecdd;
@@ -34,36 +34,7 @@
     flex-direction: column;
     align-items: center;
     overflow-x: hidden;
-  }
-
-  .stripe-band{
-    width: 100%;
-    height: 38px;
-    overflow: hidden;
-    background: repeating-linear-gradient(90deg,
-      var(--green) 0 24px, var(--pink) 24px 48px);
-    display: flex;
-    align-items: center;
-    flex: 0 0 auto;
-  }
-  .marquee{
-    display: flex;
-    white-space: nowrap;
-    animation: marquee-scroll 22s linear infinite;
-  }
-  .marquee span{
-    font-family: 'Jost', sans-serif;
-    font-weight: 600;
-    font-size: .78rem;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--cream);
-    text-shadow: 0 1px 1px rgba(21,46,34,.35);
-    padding-right: 22px;
-  }
-  @keyframes marquee-scroll{
-    from{ transform: translateX(0); }
-    to{ transform: translateX(-50%); }
+    padding-top: 24px;
   }
 
   .sheet{
@@ -88,13 +59,14 @@
   }
 
   .logo{
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Fraunces', serif;
     font-style: italic;
     font-weight: 600;
-    font-size: 3.1rem;
+    font-size: 2.85rem;
     color: var(--green);
     margin: 0;
     line-height: 1;
+    letter-spacing: -.01em;
   }
 
   .greeting{
@@ -124,9 +96,10 @@
 
   .card{
     background: var(--cream-card);
-    border: 2px solid var(--green);
-    border-radius: 6px;
-    padding: 22px 20px;
+    border: 1px solid var(--green);
+    border-radius: 8px;
+    padding: 24px 22px;
+    box-shadow: 0 10px 28px -14px rgba(21,46,34,.45);
   }
 
   .settings{
@@ -140,8 +113,9 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    border: 1.5px dashed var(--green);
-    border-radius: 4px;
+    background: var(--cream);
+    border: 1px solid var(--pink-stripe);
+    border-radius: 6px;
     padding: 12px 8px 14px;
   }
   .setting label{
@@ -160,7 +134,7 @@
   .stepper button{
     width: 30px; height: 30px;
     border-radius: 50%;
-    border: 1.5px solid var(--green);
+    border: 1px solid var(--green);
     background: var(--pink);
     color: var(--green-dark);
     font-family: 'Jost', sans-serif;
@@ -168,6 +142,7 @@
     font-size: 1.1rem;
     cursor: pointer;
     line-height: 1;
+    transition: background .15s ease, color .15s ease;
   }
   .stepper button:hover{ background: var(--green); color: var(--cream); }
   .stepper button:focus-visible, button:focus-visible, input:focus-visible{
@@ -204,7 +179,7 @@
   }
   .mode-pill.break{ background: var(--pink); color: var(--green-dark); }
 
-  .ring-box{ position: relative; width: 250px; height: 250px; }
+  .ring-box{ position: relative; width: 250px; height: 250px; filter: drop-shadow(0 8px 18px rgba(21,46,34,.18)); }
   .ring-box svg{ transform: rotate(-90deg); }
   .ring-bg{ fill: none; stroke: var(--pink-stripe); stroke-width: 13; }
   .ring-fg{
@@ -232,10 +207,11 @@
   .pomo-count{
     font-family: 'Jost', sans-serif;
     font-weight: 500;
-    letter-spacing: .06em;
-    font-size: 1rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-size: .78rem;
     color: var(--ink-soft);
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
   .confetti-layer{ position: absolute; inset: 0; overflow: visible; pointer-events: none; z-index: 6; }
@@ -253,47 +229,45 @@
   .btn{
     font-family: 'Jost', sans-serif;
     font-weight: 600;
-    letter-spacing: .08em;
+    letter-spacing: .07em;
     text-transform: uppercase;
-    font-size: 1rem;
-    border: 2px solid var(--green);
+    font-size: .92rem;
+    border: 1px solid var(--green);
     border-radius: 999px;
     padding: 11px 26px;
     cursor: pointer;
     color: var(--green-dark);
     background: var(--pink);
+    transition: background .15s ease, transform .1s ease, box-shadow .15s ease;
+    box-shadow: 0 4px 10px -4px rgba(21,46,34,.35);
   }
-  .btn.secondary{ background: transparent; color: var(--green); }
-  .btn:hover{ filter: brightness(1.04); }
+  .btn.secondary{ background: transparent; color: var(--green); box-shadow: none; }
+  .btn:hover{ filter: brightness(1.03); }
   .btn:active{ transform: translateY(1px); }
-  .icon-btn{ padding: 11px 15px; font-size: 1.2rem; }
+  .icon-btn{ padding: 10px 14px; display: inline-flex; align-items: center; justify-content: center; }
+  .icon-btn svg{ width: 18px; height: 18px; }
 
   .celebration{
     display: none;
     text-align: center;
-    background: repeating-linear-gradient(125deg, var(--pink) 0 16px, var(--pink-stripe) 16px 32px);
-    border: 2px solid var(--green);
-    border-radius: 6px;
-    padding: 16px 14px;
+    background: var(--pink-stripe);
+    border: 1px solid var(--pink-dark);
+    border-radius: 8px;
+    padding: 16px 18px;
     margin-top: 2px;
   }
-  .celebration.show{ display: block; animation: pop .35s ease; }
-  .stars{
-    color: var(--gold);
-    font-size: 1rem;
-    letter-spacing: .1em;
-    margin-bottom: 6px;
-  }
+  .celebration.show{ display: block; animation: pop .3s ease; }
+  .celebration .eyebrow{ color: var(--green-dark); opacity: .7; margin-bottom: 4px; }
   .celebration p{
     margin: 0;
     font-family: 'Fraunces', serif;
     font-style: italic;
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: var(--green-dark);
   }
   @keyframes pop{
-    from{ transform: scale(.85); opacity: 0; }
+    from{ transform: scale(.92); opacity: 0; }
     to{ transform: scale(1); opacity: 1; }
   }
 
@@ -301,19 +275,19 @@
     display: none;
     text-align: center;
     background: var(--green);
-    border: 2px solid var(--green-dark);
-    border-radius: 6px;
-    padding: 18px 14px 16px;
+    border: 1px solid var(--green-dark);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
     margin-top: 2px;
   }
-  .break-over.show{ display: block; animation: pop .35s ease; }
-  .break-over svg{ display: block; margin: 0 auto 8px; }
+  .break-over.show{ display: block; animation: pop .3s ease; }
+  .break-over .eyebrow{ color: var(--pink); opacity: .85; margin-bottom: 4px; }
   .break-over p{
     margin: 0;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Fraunces', serif;
     font-style: italic;
     font-weight: 600;
-    font-size: 1.9rem;
+    font-size: 1.7rem;
     color: var(--cream);
   }
 
@@ -342,14 +316,16 @@
     font-weight: 600;
     letter-spacing: .06em;
     text-transform: uppercase;
-    font-size: 1rem;
-    border: 2px solid var(--green);
+    font-size: .9rem;
+    border: 1px solid var(--green);
     border-radius: 999px;
     padding: 0 20px;
     background: var(--green);
     color: var(--cream);
     cursor: pointer;
+    transition: background .15s ease;
   }
+  .task-add button:hover{ background: var(--green-dark); }
 
   .task-list{
     list-style: none; margin: 0; padding: 0;
@@ -386,15 +362,13 @@
 
   footer.sign{
     text-align: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.15rem;
-    color: var(--green-dark);
-    background: var(--cream-card);
-    border: 1.5px solid var(--green);
-    border-radius: 999px;
-    padding: 8px 10px;
-    margin-top: 2px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: .74rem;
+    color: var(--ink-soft);
+    padding: 4px 10px 0;
   }
 
   @media (max-width: 380px){
@@ -405,13 +379,6 @@
 </style>
 </head>
 <body>
-
-  <div class="stripe-band">
-    <div class="marquee">
-      <span>EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
-      <span aria-hidden="true">EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
-    </div>
-  </div>
 
   <div class="sheet">
 
@@ -453,7 +420,7 @@
         </svg>
         <div class="time-display">
           <span class="time" id="timeLabel">25:00</span>
-          <span class="pomo-count" id="pomoCount">🍅 0 pomodoros hoy</span>
+          <span class="pomo-count" id="pomoCount">0 pomodoros hoy</span>
         </div>
         <div class="confetti-layer" id="confettiLayer"></div>
       </div>
@@ -461,19 +428,20 @@
       <div class="controls">
         <button class="btn" id="startPauseBtn">Empezar</button>
         <button class="btn secondary" id="resetBtn">Reiniciar</button>
-        <button class="btn secondary icon-btn" id="soundToggle" aria-label="Silenciar sonidos" title="Sonidos">🔊</button>
+        <button class="btn secondary icon-btn" id="soundToggle" aria-label="Silenciar sonidos" title="Sonidos">
+          <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><path d="M16 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 6a9 9 0 0 1 0 12"></path></svg>
+          <svg id="soundIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><line x1="16" y1="9" x2="21" y2="14"></line><line x1="21" y1="9" x2="16" y2="14"></line></svg>
+        </button>
       </div>
 
       <div class="celebration" id="celebration">
-        <p class="stars">★ ★ ★ ★ ★</p>
-        <p>¡Felicitaciones, Emma! Te merecés una dosis de TikTok 📱</p>
+        <p class="eyebrow">Pomodoro completo</p>
+        <p>¡Felicitaciones, Emma! Te merecés una dosis de TikTok.</p>
       </div>
 
       <div class="break-over" id="breakOver">
-        <svg width="90" height="20" viewBox="0 0 90 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M2 10 Q 13 0, 24 10 T 46 10 T 68 10 T 88 10" fill="none" stroke="#f4ecdd" stroke-width="2.2" stroke-linecap="round"></path>
-        </svg>
-        <p>¡Volvemos a estudiar!</p>
+        <p class="eyebrow">Descanso terminado</p>
+        <p>Volvemos a estudiar</p>
       </div>
     </section>
 
@@ -489,13 +457,6 @@
 
     <footer class="sign">Hecho con cariño para Emma</footer>
 
-  </div>
-
-  <div class="stripe-band">
-    <div class="marquee">
-      <span>EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
-      <span aria-hidden="true">EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ EMMA'S POMODORO ✕ </span>
-    </div>
   </div>
 
 <script>
@@ -545,6 +506,8 @@
   var breakOver = document.getElementById('breakOver');
   var confettiLayer = document.getElementById('confettiLayer');
   var soundToggle = document.getElementById('soundToggle');
+  var soundIconOn = document.getElementById('soundIconOn');
+  var soundIconOff = document.getElementById('soundIconOff');
 
   var taskInput = document.getElementById('taskInput');
   var addTaskBtn = document.getElementById('addTaskBtn');
@@ -601,7 +564,8 @@
   }
 
   function renderSoundToggle(){
-    soundToggle.textContent = state.soundOn ? '🔊' : '🔇';
+    soundIconOn.style.display = state.soundOn ? '' : 'none';
+    soundIconOff.style.display = state.soundOn ? 'none' : '';
     soundToggle.setAttribute('aria-label', state.soundOn ? 'Silenciar sonidos' : 'Activar sonidos');
   }
 
@@ -641,7 +605,7 @@
 
   function renderTimer(){
     timeLabel.textContent = formatTime(remaining);
-    pomoCount.textContent = '🍅 ' + state.pomosToday + (state.pomosToday === 1 ? ' pomodoro hoy' : ' pomodoros hoy');
+    pomoCount.textContent = state.pomosToday + (state.pomosToday === 1 ? ' pomodoro hoy' : ' pomodoros hoy');
 
     var fraction = totalSeconds > 0 ? (remaining / totalSeconds) : 0;
     var offset = CIRC * (1 - fraction);
