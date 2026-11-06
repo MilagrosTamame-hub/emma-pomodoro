@@ -8,6 +8,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* ---- design tokens ----
+     palette: cream paper, deep editorial green, dusty pink, warm ink
+     fonts: Fraunces italic (logo/headlines/timer), Jost (small-caps labels/buttons),
+            Lora (body/tasks) — three families, restrained
+     layout: single centered column of bordered cards with soft shadow depth,
+     on a striped paper background; vintage boutique letterhead, no gimmicks
+  */
   :root{
     --cream: #f4ecdd;
     --cream-card: #faf5ea;
@@ -19,6 +26,20 @@
     --gold: #dcb876;
     --ink: #2c2620;
     --ink-soft: #5b5245;
+  }
+
+  /* ---- second skin: soft sunset-gradient look, toggled by the sparkle button ---- */
+  body.theme-gradient{
+    --cream: #fdf2e7;
+    --cream-card: #fffaf3;
+    --green: #c2410c;
+    --green-dark: #9a3412;
+    --pink: #f4bfcf;
+    --pink-stripe: #f7d6c9;
+    --pink-dark: #c2579b;
+    --gold: #e8a33d;
+    --ink: #3a2a22;
+    --ink-soft: #7a5b4d;
   }
 
   *{ box-sizing: border-box; }
@@ -35,7 +56,14 @@
     align-items: center;
     overflow-x: hidden;
     padding-top: 24px;
+    transition: background 1s ease, color .5s ease;
   }
+  body.theme-gradient{
+    background: radial-gradient(ellipse at 50% -10%,
+      #ffd9ae 0%, #ffb3c6 32%, #d9a7f0 58%, var(--cream) 78%);
+  }
+
+  .card{ transition: background .5s ease, border-color .5s ease, box-shadow .5s ease; }
 
   .sheet{
     width: 100%;
@@ -102,6 +130,7 @@
     box-shadow: 0 10px 28px -14px rgba(21,46,34,.45);
   }
 
+  /* ---- settings ---- */
   .settings{
     display: flex;
     gap: 14px;
@@ -158,6 +187,7 @@
     text-align: center;
   }
 
+  /* ---- timer ---- */
   .timer-wrap{
     position: relative;
     display: flex;
@@ -180,6 +210,19 @@
   .mode-pill.break{ background: var(--pink); color: var(--green-dark); }
 
   .ring-box{ position: relative; width: 250px; height: 250px; filter: drop-shadow(0 8px 18px rgba(21,46,34,.18)); }
+  .ring-box::before{
+    content: "";
+    position: absolute;
+    inset: -22px;
+    border-radius: 50%;
+    z-index: -1;
+    background: radial-gradient(circle at 35% 30%,
+      #ffb199 0%, #ff7eb3 35%, #c471ed 62%, transparent 76%);
+    filter: blur(28px);
+    opacity: 0;
+    transition: opacity .6s ease;
+  }
+  body.theme-gradient .ring-box::before{ opacity: .9; }
   .ring-box svg{ transform: rotate(-90deg); }
   .ring-bg{ fill: none; stroke: var(--pink-stripe); stroke-width: 13; }
   .ring-fg{
@@ -244,9 +287,17 @@
   .btn.secondary{ background: transparent; color: var(--green); box-shadow: none; }
   .btn:hover{ filter: brightness(1.03); }
   .btn:active{ transform: translateY(1px); }
-  .icon-btn{ padding: 10px 14px; display: inline-flex; align-items: center; justify-content: center; }
-  .icon-btn svg{ width: 18px; height: 18px; }
+  .icon-btn{ position: relative; width: 42px; height: 42px; padding: 0; }
+  .icon-btn svg{
+    position: absolute; top: 50%; left: 50%;
+    width: 18px; height: 18px;
+    transform: translate(-50%,-50%) scale(1);
+    opacity: 1;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .icon-btn svg.icon-hidden{ opacity: 0; transform: translate(-50%,-50%) scale(.5); }
 
+  /* ---- celebration (focus done) ---- */
   .celebration{
     display: none;
     text-align: center;
@@ -271,6 +322,7 @@
     to{ transform: scale(1); opacity: 1; }
   }
 
+  /* ---- break-over panel: deep green, cream ---- */
   .break-over{
     display: none;
     text-align: center;
@@ -291,6 +343,7 @@
     color: var(--cream);
   }
 
+  /* ---- tasks ---- */
   .tasks-title{
     font-family: 'Fraunces', serif;
     font-style: italic;
@@ -361,14 +414,20 @@
   }
 
   footer.sign{
+    align-self: center;
     text-align: center;
     font-family: 'Jost', sans-serif;
     font-weight: 500;
     letter-spacing: .08em;
     text-transform: uppercase;
-    font-size: .74rem;
+    font-size: .72rem;
     color: var(--ink-soft);
-    padding: 4px 10px 0;
+    background: var(--cream-card);
+    border: 1px solid var(--pink-stripe);
+    border-radius: 999px;
+    padding: 9px 20px;
+    margin: 2px auto 0;
+    transition: background .5s ease, border-color .5s ease, color .4s ease;
   }
 
   @media (max-width: 380px){
@@ -376,6 +435,48 @@
     .time{ font-size: 3.2rem; }
     .logo{ font-size: 2.6rem; }
   }
+
+  /* ---- motion: a quiet entrance, a breathing timer, tidy list transitions ---- */
+  @keyframes fade-up{
+    from{ opacity: 0; transform: translateY(14px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+  .sheet > *{
+    opacity: 0;
+    animation: fade-up .55s cubic-bezier(.22,.61,.36,1) forwards;
+  }
+  .sheet > *:nth-child(1){ animation-delay: .02s; }
+  .sheet > *:nth-child(2){ animation-delay: .1s; }
+  .sheet > *:nth-child(3){ animation-delay: .18s; }
+  .sheet > *:nth-child(4){ animation-delay: .26s; }
+  .sheet > *:nth-child(5){ animation-delay: .34s; }
+
+  @keyframes ring-breathe{
+    0%, 100%{ filter: drop-shadow(0 8px 18px rgba(21,46,34,.18)); }
+    50%{ filter: drop-shadow(0 10px 28px rgba(35,70,53,.42)); }
+  }
+  .ring-box.running{ animation: ring-breathe 2.6s ease-in-out infinite; }
+
+  .mode-pill{ transition: background .25s ease, color .25s ease; }
+
+  @keyframes task-in{
+    from{ opacity: 0; transform: translateX(-8px); }
+    to{ opacity: 1; transform: translateX(0); }
+  }
+  .task-item{ animation: task-in .22s ease both; }
+  .task-item.leaving{
+    animation: task-out .18s ease forwards;
+    pointer-events: none;
+  }
+  @keyframes task-out{
+    to{ opacity: 0; transform: translateX(8px) scale(.97); }
+  }
+  @keyframes check-pop{
+    0%{ transform: scale(.6); }
+    60%{ transform: scale(1.15); }
+    100%{ transform: scale(1); }
+  }
+  .task-item.done .check{ animation: check-pop .25s ease; }
 </style>
 </head>
 <body>
@@ -430,7 +531,10 @@
         <button class="btn secondary" id="resetBtn">Reiniciar</button>
         <button class="btn secondary icon-btn" id="soundToggle" aria-label="Silenciar sonidos" title="Sonidos">
           <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><path d="M16 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 6a9 9 0 0 1 0 12"></path></svg>
-          <svg id="soundIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><line x1="16" y1="9" x2="21" y2="14"></line><line x1="21" y1="9" x2="16" y2="14"></line></svg>
+          <svg id="soundIconOff" class="icon-hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><line x1="16" y1="9" x2="21" y2="14"></line><line x1="21" y1="9" x2="16" y2="14"></line></svg>
+        </button>
+        <button class="btn secondary icon-btn" id="themeToggle" aria-label="Cambiar estilo visual" title="Cambiar estilo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l1.8 4.6L19 9l-4.2 1.4L13 15l-1.8-4.6L7 9l4.2-1.4L13 3z"></path></svg>
         </button>
       </div>
 
@@ -463,6 +567,7 @@
 (function(){
   "use strict";
 
+  // ---------- storage helpers (per-viewer convenience only) ----------
   function loadJSON(key, fallback){
     try{
       var raw = localStorage.getItem(key);
@@ -470,25 +575,29 @@
     }catch(e){ return fallback; }
   }
   function saveJSON(key, value){
-    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ }
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* ignore */ }
   }
 
+  // ---------- state ----------
   var state = loadJSON('emmaPomodoroState', {
     focusMin: 25,
     breakMin: 5,
     pomosToday: 0,
-    tasks: [],
-    soundOn: true
+    tasks: [], // {id, label, done}
+    soundOn: true,
+    theme: 'classic'
   });
   if(typeof state.soundOn === 'undefined'){ state.soundOn = true; }
+  if(typeof state.theme === 'undefined'){ state.theme = 'classic'; }
 
-  var mode = 'focus';
+  var mode = 'focus';           // 'focus' | 'break'
   var totalSeconds = state.focusMin * 60;
   var remaining = totalSeconds;
   var running = false;
   var tickHandle = null;
-  var endTimestamp = null;
+  var endTimestamp = null;      // wall-clock time the current run should hit 0 (keeps counting correctly even if the tab is backgrounded)
 
+  // ---------- elements ----------
   var focusVal = document.getElementById('focusVal');
   var breakVal = document.getElementById('breakVal');
   var focusUp = document.getElementById('focusUp');
@@ -497,6 +606,7 @@
   var breakDown = document.getElementById('breakDown');
 
   var modePill = document.getElementById('modePill');
+  var ringBox = document.querySelector('.ring-box');
   var ringFg = document.getElementById('ringFg');
   var timeLabel = document.getElementById('timeLabel');
   var pomoCount = document.getElementById('pomoCount');
@@ -508,14 +618,16 @@
   var soundToggle = document.getElementById('soundToggle');
   var soundIconOn = document.getElementById('soundIconOn');
   var soundIconOff = document.getElementById('soundIconOff');
+  var themeToggle = document.getElementById('themeToggle');
 
   var taskInput = document.getElementById('taskInput');
   var addTaskBtn = document.getElementById('addTaskBtn');
   var taskList = document.getElementById('taskList');
   var emptyMsg = document.getElementById('emptyMsg');
 
-  var CIRC = 2 * Math.PI * 108;
+  var CIRC = 2 * Math.PI * 108; // ~678.6
 
+  // ---------- gentle sounds on finishing (synthesized, no audio files) ----------
   var audioCtx = null;
 
   function ensureAudio(){
@@ -524,7 +636,7 @@
       if(!AC) return;
       if(!audioCtx){ audioCtx = new AC(); }
       if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
-    }catch(e){ }
+    }catch(e){ /* audio not available, stay silent */ }
   }
 
   function playNote(freq, when, dur, vol){
@@ -541,7 +653,7 @@
       gain.connect(audioCtx.destination);
       osc.start(when);
       osc.stop(when + dur + 0.03);
-    }catch(e){ }
+    }catch(e){ /* ignore */ }
   }
 
   function playFocusEndSound(){
@@ -564,8 +676,8 @@
   }
 
   function renderSoundToggle(){
-    soundIconOn.style.display = state.soundOn ? '' : 'none';
-    soundIconOff.style.display = state.soundOn ? 'none' : '';
+    soundIconOn.classList.toggle('icon-hidden', !state.soundOn);
+    soundIconOff.classList.toggle('icon-hidden', state.soundOn);
     soundToggle.setAttribute('aria-label', state.soundOn ? 'Silenciar sonidos' : 'Activar sonidos');
   }
 
@@ -574,6 +686,17 @@
     if(state.soundOn){ ensureAudio(); }
     persist();
     renderSoundToggle();
+  });
+
+  // ---------- visual style refresh (classic letterhead <-> soft sunset glow) ----------
+  function applyTheme(){
+    document.body.classList.toggle('theme-gradient', state.theme === 'gradient');
+  }
+
+  themeToggle.addEventListener('click', function(){
+    state.theme = state.theme === 'gradient' ? 'classic' : 'gradient';
+    persist();
+    applyTheme();
   });
 
   function fireConfetti(){
@@ -592,6 +715,7 @@
     }
   }
 
+  // ---------- render ----------
   function formatTime(s){
     var m = Math.floor(s / 60);
     var sec = s % 60;
@@ -635,6 +759,10 @@
     saveJSON('emmaPomodoroState', state);
   }
 
+  // ---------- timer controls ----------
+  // Instead of just decrementing a counter every second (which drifts or
+  // stalls when the browser throttles a background tab), we recompute the
+  // remaining time from the real clock (endTimestamp) on every tick.
   function tick(){
     if(!running || endTimestamp === null) return;
     var msLeft = endTimestamp - Date.now();
@@ -645,6 +773,8 @@
     }
   }
 
+  // When the tab becomes visible again (Emma switched away and came back),
+  // recheck immediately instead of waiting for the next throttled interval tick.
   document.addEventListener('visibilitychange', function(){
     if(!document.hidden && running){
       tick();
@@ -655,6 +785,7 @@
     stopTicking();
     running = false;
     endTimestamp = null;
+    ringBox.classList.remove('running');
 
     if(mode === 'focus'){
       state.pomosToday += 1;
@@ -683,12 +814,14 @@
 
   startPauseBtn.addEventListener('click', function(){
     if(running){
+      // pausing: lock in exactly how much time is left
       if(endTimestamp !== null){
         remaining = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
       }
       running = false;
       endTimestamp = null;
       stopTicking();
+      ringBox.classList.remove('running');
     } else {
       running = true;
       ensureAudio();
@@ -696,6 +829,7 @@
       breakOver.classList.remove('show');
       endTimestamp = Date.now() + remaining * 1000;
       startTicking();
+      ringBox.classList.add('running');
     }
     renderTimer();
   });
@@ -704,11 +838,13 @@
     running = false;
     endTimestamp = null;
     stopTicking();
+    ringBox.classList.remove('running');
     celebration.classList.remove('show');
     breakOver.classList.remove('show');
     setMode(mode, true);
   });
 
+  // ---------- settings steppers ----------
   function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
   function adjustFocus(delta){
@@ -729,6 +865,7 @@
   breakUp.addEventListener('click', function(){ adjustBreak(1); });
   breakDown.addEventListener('click', function(){ adjustBreak(-1); });
 
+  // ---------- tasks ----------
   function renderTasks(){
     taskList.innerHTML = '';
     if(state.tasks.length === 0){
@@ -762,9 +899,12 @@
       del.setAttribute('aria-label', 'Eliminar tarea');
       del.textContent = '✕';
       del.addEventListener('click', function(){
-        state.tasks = state.tasks.filter(function(t){ return t.id !== task.id; });
-        persist();
-        renderTasks();
+        li.classList.add('leaving');
+        setTimeout(function(){
+          state.tasks = state.tasks.filter(function(t){ return t.id !== task.id; });
+          persist();
+          renderTasks();
+        }, 170);
       });
 
       li.appendChild(check);
@@ -789,8 +929,10 @@
     if(e.key === 'Enter'){ e.preventDefault(); addTask(); }
   });
 
+  // ---------- init ----------
   renderSettings();
   renderSoundToggle();
+  applyTheme();
   setMode('focus', true);
   renderTasks();
 
