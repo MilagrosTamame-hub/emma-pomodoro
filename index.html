@@ -6,7 +6,7 @@
 <title>Emma's Pomodoro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Jost:wght@400;500;600&family=Lora:wght@400;500;600&family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* ---- design tokens ----
      palette: cream paper, deep editorial green, dusty pink, warm ink
@@ -32,20 +32,20 @@
   }
 
   /* ---- second skin: soft coral-glow look, toggled by the sparkle button —
-     a different voice on purpose: upright modern serif + clean grotesque,
-     no stripes, no italics, a warm blurred halo behind the timer ---- */
+     a different voice on purpose: upright modern sans, no stripes, no
+     italics, a warm blurred halo behind the timer ---- */
   body.theme-gradient{
     --cream: #fdf2ea;
     --cream-card: #fffaf4;
-    --green: #c23b22;
-    --green-dark: #8f2a18;
+    --green: #c2185b;
+    --green-dark: #8e1046;
     --pink: #f6c3c9;
     --pink-stripe: #f9d9d0;
     --pink-dark: #d1495b;
     --gold: #e8a33d;
     --ink: #3a241f;
     --ink-soft: #8a5f54;
-    --font-display: 'Cormorant Garamond', serif;
+    --font-display: 'Poppins', sans-serif;
     --font-label: 'Manrope', sans-serif;
     --font-body: 'Manrope', sans-serif;
   }
@@ -69,11 +69,22 @@
   body.theme-gradient{
     background: radial-gradient(ellipse at 50% -8%,
       #ffd4a8 0%, #ff9fab 30%, #f0677d 54%, var(--cream) 78%);
+    background-size: 160% 160%;
+    animation: drift-glow 16s ease-in-out infinite alternate;
+  }
+  @keyframes drift-glow{
+    0%{ background-position: 42% -10%; }
+    50%{ background-position: 58% 6%; }
+    100%{ background-position: 48% -4%; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    body.theme-gradient{ animation: none; }
   }
 
   .card{ transition: background .5s ease, border-color .5s ease, box-shadow .5s ease; }
 
   .sheet{
+    position: relative;
     width: 100%;
     max-width: 460px;
     display: flex;
@@ -83,6 +94,19 @@
   }
 
   header{ text-align: center; margin-top: 16px; }
+
+  /* the logo + timer form one hero block, vertically centered in the
+     first screen — like a lockscreen/screensaver — so the time reads
+     as the main event; settings and tasks live below the fold */
+  .hero{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    min-height: 88vh;
+    width: 100%;
+  }
 
   .eyebrow{
     font-family: var(--font-label);
@@ -94,6 +118,7 @@
     margin: 0 0 8px;
     transition: color .4s ease;
   }
+  body.theme-gradient header .eyebrow{ color: rgba(255,255,255,.8); }
 
   .logo{
     font-family: var(--font-display);
@@ -104,12 +129,15 @@
     margin: 0;
     line-height: 1;
     letter-spacing: -.01em;
-    transition: color .4s ease;
+    transition: color .4s ease, text-shadow .4s ease;
   }
   body.theme-gradient .logo{
     font-style: normal;
-    font-weight: 500;
-    letter-spacing: -.02em;
+    font-weight: 400;
+    font-size: 2.3rem;
+    letter-spacing: -.03em;
+    color: #fff;
+    text-shadow: 0 2px 18px rgba(140,30,20,.35);
   }
   body.theme-gradient .logo .accent{ font-weight: 700; }
 
@@ -121,7 +149,7 @@
     color: var(--ink);
     margin: 14px 0 0;
   }
-  body.theme-gradient .greeting{ font-style: normal; font-weight: 500; }
+  body.theme-gradient .greeting{ font-style: normal; font-weight: 500; color: rgba(255,255,255,.92); }
 
   .divider{
     display: flex;
@@ -145,6 +173,24 @@
     border-radius: 8px;
     padding: 24px 22px;
     box-shadow: 0 10px 28px -14px rgba(21,46,34,.45);
+  }
+
+  /* gradient theme: no letterhead cards — the hero (header + timer) floats
+     directly on the glow, like a lockscreen; only the two working sections
+     (settings, tasks) keep a soft frosted-glass surface for legibility */
+  body.theme-gradient header.card,
+  body.theme-gradient .timer-wrap.card{
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 10px 10px 0;
+  }
+  body.theme-gradient section.card:not(.timer-wrap){
+    background: rgba(255,255,255,.52);
+    border: 1px solid rgba(255,255,255,.65);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 14px 34px -20px rgba(140,40,25,.4);
   }
 
   /* ---- settings ---- */
@@ -202,6 +248,13 @@
     color: var(--green);
     min-width: 2.2ch;
     text-align: center;
+    transition: color .4s ease, font-size .4s ease;
+  }
+  body.theme-gradient .stepper .val{
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    color: var(--green);
   }
 
   /* ---- timer ---- */
@@ -223,10 +276,20 @@
     border-radius: 999px;
     background: var(--green);
     color: var(--cream);
+    transition: background .4s ease, color .4s ease, padding .4s ease, box-shadow .4s ease;
   }
   .mode-pill.break{ background: var(--pink); color: var(--green-dark); }
+  body.theme-gradient .mode-pill{
+    background: transparent;
+    color: #fff;
+    padding: 0;
+    letter-spacing: .3em;
+    font-weight: 700;
+    text-shadow: 0 1px 10px rgba(130,25,20,.35);
+  }
+  body.theme-gradient .mode-pill.break{ background: transparent; color: #fff; }
 
-  .ring-box{ position: relative; width: 250px; height: 250px; filter: drop-shadow(0 8px 18px rgba(21,46,34,.18)); }
+  .ring-box{ position: relative; width: 312px; height: 312px; filter: drop-shadow(0 8px 18px rgba(21,46,34,.18)); transition: filter .4s ease, width .4s ease, height .4s ease; }
   .ring-box::before{
     content: "";
     position: absolute;
@@ -237,10 +300,13 @@
       #ffb199 0%, #ff7a6b 35%, #e8415c 62%, transparent 76%);
     filter: blur(28px);
     opacity: 0;
-    transition: opacity .6s ease;
+    transition: opacity .6s ease, inset .6s ease;
   }
-  body.theme-gradient .ring-box::before{ opacity: .9; }
-  .ring-box svg{ transform: rotate(-90deg); }
+  /* no card, no ring — just the glow and the number, like a lockscreen timer */
+  body.theme-gradient .ring-box{ filter: none; }
+  body.theme-gradient .ring-box::before{ opacity: 1; inset: -65px; }
+  .ring-box svg{ transform: rotate(-90deg); transition: opacity .4s ease; }
+  body.theme-gradient .ring-box svg{ opacity: 0; }
   .ring-bg{ fill: none; stroke: var(--pink-stripe); stroke-width: 13; transition: stroke .4s ease, stroke-width .4s ease; }
   .ring-fg{
     fill: none;
@@ -250,9 +316,6 @@
     transition: stroke-dashoffset .3s linear, stroke .3s;
   }
   .ring-fg.break{ stroke: var(--pink-dark); }
-  body.theme-gradient .ring-bg{ stroke: rgba(255,255,255,.4); stroke-width: 7; }
-  body.theme-gradient .ring-fg{ stroke: #ffffff; stroke-width: 7; }
-  body.theme-gradient .ring-fg.break{ stroke: #fff4ec; }
 
   .time-display{
     position: absolute; inset: 0;
@@ -262,13 +325,19 @@
   .time{
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 3.8rem;
+    font-size: clamp(3rem, 12vw, 4.3rem);
     color: var(--ink);
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    transition: color .4s ease, font-weight .4s ease;
+    transition: color .4s ease, font-weight .4s ease, text-shadow .4s ease;
   }
-  body.theme-gradient .time{ font-weight: 400; font-size: 4.1rem; letter-spacing: -.01em; }
+  body.theme-gradient .time{
+    font-weight: 300;
+    font-size: clamp(5.4rem, 26vw, 9.8rem);
+    letter-spacing: -.02em;
+    color: #fff;
+    text-shadow: 0 4px 30px rgba(130,25,20,.4);
+  }
   .pomo-count{
     font-family: var(--font-label);
     font-weight: 500;
@@ -277,7 +346,32 @@
     font-size: .78rem;
     color: var(--ink-soft);
     margin-top: 6px;
+    transition: color .4s ease;
   }
+  body.theme-gradient .pomo-count{ color: rgba(255,255,255,.8); }
+
+  /* ---- progress bar: a slim track showing how far into the current
+     focus/break stretch you are, filling left to right as time passes ---- */
+  .progress-track{
+    width: min(260px, 72%);
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(35,70,53,.12);
+    overflow: hidden;
+    margin-top: 4px;
+    transition: background .4s ease;
+  }
+  body.theme-gradient .progress-track{ background: rgba(255,255,255,.28); }
+  .progress-fill{
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: var(--green);
+    transition: width .3s linear, background .4s ease;
+  }
+  .progress-fill.break{ background: var(--pink-dark); }
+  body.theme-gradient .progress-fill{ background: #fff; }
+  body.theme-gradient .progress-fill.break{ background: #fff; }
 
   .confetti-layer{ position: absolute; inset: 0; overflow: visible; pointer-events: none; z-index: 6; }
   .confetti-piece{
@@ -309,6 +403,15 @@
   .btn.secondary{ background: transparent; color: var(--green); box-shadow: none; }
   .btn:hover{ filter: brightness(1.03); }
   .btn:active{ transform: translateY(1px); }
+  body.theme-gradient .btn{
+    background: rgba(255,255,255,.55);
+    border-color: rgba(255,255,255,.8);
+    color: var(--green-dark);
+    box-shadow: none;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  body.theme-gradient .btn.secondary{ background: rgba(255,255,255,.22); border-color: rgba(255,255,255,.55); }
   .icon-btn{ position: relative; width: 42px; height: 42px; padding: 0; }
   .icon-btn svg{
     position: absolute; top: 50%; left: 50%;
@@ -331,6 +434,12 @@
   }
   .celebration.show{ display: block; animation: pop .3s ease; }
   .celebration .eyebrow{ color: var(--green-dark); opacity: .7; margin-bottom: 4px; }
+  body.theme-gradient .celebration{
+    background: rgba(255,255,255,.5);
+    border-color: rgba(255,255,255,.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
   .celebration p{
     margin: 0;
     font-family: var(--font-display);
@@ -357,6 +466,12 @@
   }
   .break-over.show{ display: block; animation: pop .3s ease; }
   .break-over .eyebrow{ color: var(--pink); opacity: .85; margin-bottom: 4px; }
+  body.theme-gradient .break-over{
+    background: rgba(194,59,34,.75);
+    border-color: rgba(255,255,255,.4);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
   .break-over p{
     margin: 0;
     font-family: var(--font-display);
@@ -456,11 +571,17 @@
     margin: 2px auto 0;
     transition: background .5s ease, border-color .5s ease, color .4s ease;
   }
+  body.theme-gradient footer.sign{
+    background: rgba(255,255,255,.4);
+    border-color: rgba(255,255,255,.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
 
   @media (max-width: 380px){
-    .ring-box{ width: 215px; height: 215px; }
-    .time{ font-size: 3.2rem; }
-    .logo{ font-size: 2.6rem; }
+    .ring-box{ width: 260px; height: 260px; }
+    .logo{ font-size: 2.1rem; }
+    .hero{ min-height: 82vh; }
   }
 
   /* ---- motion: a quiet entrance, a breathing timer, tidy list transitions ---- */
@@ -510,11 +631,54 @@
 
   <div class="sheet">
 
-    <header class="card">
-      <p class="eyebrow">Temporizador personalizado</p>
-      <h1 class="logo">Emma's <span class="accent">Pomodoro</span></h1>
-      <p class="greeting">Hola Emma, ¿qué vamos a estudiar hoy?</p>
-    </header>
+    <div class="hero">
+      <header class="card">
+        <p class="eyebrow">Temporizador personalizado</p>
+        <h1 class="logo">Emma's <span class="accent">Pomodoro</span></h1>
+        <p class="greeting">Hola Emma, ¿qué vamos a estudiar hoy?</p>
+      </header>
+
+      <section class="card timer-wrap">
+        <span class="mode-pill" id="modePill">Hora de enfocarnos</span>
+
+        <div class="ring-box">
+          <svg width="100%" height="100%" viewBox="0 0 250 250">
+            <circle class="ring-bg" cx="125" cy="125" r="108"></circle>
+            <circle class="ring-fg" id="ringFg" cx="125" cy="125" r="108"
+                    stroke-dasharray="678.6" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="time-display">
+            <span class="time" id="timeLabel">25:00</span>
+            <span class="pomo-count" id="pomoCount">0 pomodoros hoy</span>
+          </div>
+          <div class="confetti-layer" id="confettiLayer"></div>
+        </div>
+
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <div class="controls">
+          <button class="btn" id="startPauseBtn">Empezar</button>
+          <button class="btn secondary" id="resetBtn">Reiniciar</button>
+          <button class="btn secondary icon-btn" id="soundToggle" aria-label="Silenciar sonidos" title="Sonidos">
+            <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><path d="M16 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 6a9 9 0 0 1 0 12"></path></svg>
+            <svg id="soundIconOff" class="icon-hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><line x1="16" y1="9" x2="21" y2="14"></line><line x1="21" y1="9" x2="16" y2="14"></line></svg>
+          </button>
+          <button class="btn secondary icon-btn" id="themeToggle" aria-label="Cambiar estilo visual" title="Cambiar estilo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l1.8 4.6L19 9l-4.2 1.4L13 15l-1.8-4.6L7 9l4.2-1.4L13 3z"></path></svg>
+          </button>
+        </div>
+
+        <div class="celebration" id="celebration">
+          <p class="eyebrow">Pomodoro completo</p>
+          <p>¡Felicitaciones, Emma! Te merecés una dosis de TikTok.</p>
+        </div>
+
+        <div class="break-over" id="breakOver">
+          <p class="eyebrow">Descanso terminado</p>
+          <p>Volvemos a estudiar</p>
+        </div>
+      </section>
+    </div>
 
     <section class="card">
       <div class="settings">
@@ -534,45 +698,6 @@
             <button type="button" id="breakUp" aria-label="Más minutos de descanso">+</button>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="card timer-wrap">
-      <span class="mode-pill" id="modePill">Hora de enfocarnos</span>
-
-      <div class="ring-box">
-        <svg width="250" height="250" viewBox="0 0 250 250">
-          <circle class="ring-bg" cx="125" cy="125" r="108"></circle>
-          <circle class="ring-fg" id="ringFg" cx="125" cy="125" r="108"
-                  stroke-dasharray="678.6" stroke-dashoffset="0"></circle>
-        </svg>
-        <div class="time-display">
-          <span class="time" id="timeLabel">25:00</span>
-          <span class="pomo-count" id="pomoCount">0 pomodoros hoy</span>
-        </div>
-        <div class="confetti-layer" id="confettiLayer"></div>
-      </div>
-
-      <div class="controls">
-        <button class="btn" id="startPauseBtn">Empezar</button>
-        <button class="btn secondary" id="resetBtn">Reiniciar</button>
-        <button class="btn secondary icon-btn" id="soundToggle" aria-label="Silenciar sonidos" title="Sonidos">
-          <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><path d="M16 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 6a9 9 0 0 1 0 12"></path></svg>
-          <svg id="soundIconOff" class="icon-hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,9 8,9 12,5 12,19 8,15 4,15" fill="currentColor" stroke="none"></polygon><line x1="16" y1="9" x2="21" y2="14"></line><line x1="21" y1="9" x2="16" y2="14"></line></svg>
-        </button>
-        <button class="btn secondary icon-btn" id="themeToggle" aria-label="Cambiar estilo visual" title="Cambiar estilo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l1.8 4.6L19 9l-4.2 1.4L13 15l-1.8-4.6L7 9l4.2-1.4L13 3z"></path></svg>
-        </button>
-      </div>
-
-      <div class="celebration" id="celebration">
-        <p class="eyebrow">Pomodoro completo</p>
-        <p>¡Felicitaciones, Emma! Te merecés una dosis de TikTok.</p>
-      </div>
-
-      <div class="break-over" id="breakOver">
-        <p class="eyebrow">Descanso terminado</p>
-        <p>Volvemos a estudiar</p>
       </div>
     </section>
 
@@ -637,6 +762,7 @@
   var ringFg = document.getElementById('ringFg');
   var timeLabel = document.getElementById('timeLabel');
   var pomoCount = document.getElementById('pomoCount');
+  var progressFill = document.getElementById('progressFill');
   var startPauseBtn = document.getElementById('startPauseBtn');
   var resetBtn = document.getElementById('resetBtn');
   var celebration = document.getElementById('celebration');
@@ -762,14 +888,19 @@
     var offset = CIRC * (1 - fraction);
     ringFg.setAttribute('stroke-dashoffset', offset.toFixed(1));
 
+    var elapsedPct = totalSeconds > 0 ? (1 - fraction) * 100 : 0;
+    progressFill.style.width = elapsedPct.toFixed(1) + '%';
+
     if(mode === 'break'){
       modePill.textContent = 'Momento de descansar';
       modePill.classList.add('break');
       ringFg.classList.add('break');
+      progressFill.classList.add('break');
     } else {
       modePill.textContent = 'Hora de enfocarnos';
       modePill.classList.remove('break');
       ringFg.classList.remove('break');
+      progressFill.classList.remove('break');
     }
 
     startPauseBtn.textContent = running ? 'Pausar' : (remaining === totalSeconds ? 'Empezar' : 'Seguir');
